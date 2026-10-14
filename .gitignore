@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Local config
+.env
+
+# Caches, model downloads, generated audio, scratch
+cache/
+output/
+tmp/
+uploads/
+voices_custom/
+backups/
+demo-work/
+*.wav
+*.mp3
+!docs/**/*.mp3
+*.log
+*.bak*
+
+# Private / local-only folders
+qa_tests/
+design/
+
+# Model and weight files (never commit; they download from Hugging Face)
+*.onnx
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.npz
+.pytest_cache/

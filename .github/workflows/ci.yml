@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies (no torch, no model)
+        run: |
+          sudo apt-get update && sudo apt-get install -y libsndfile1
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn python-multipart python-dotenv numpy soundfile httpx pytest
+
+      - name: Guard against personal paths, weights, audio and secrets
+        run: python tools/guard.py
+
+      - name: Check Python syntax
+        run: python -m py_compile webui/app.py speak.py
+
+      - name: Check inline JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re, pathlib
+          html = pathlib.Path("webui/static/index.html").read_text(encoding="utf-8")
+          for i, js in enumerate(re.findall(r"<script>(.*?)</script>", html, re.S)):
+              pathlib.Path(f"/tmp/inline{i}.js").write_text(js, encoding="utf-8")
+          PY
+          for f in /tmp/inline*.js; do node --check "$f"; done
+
+      - name: Run tests
+        env:
+          KITTEN_SKIP_MODEL_LOAD: "1"
+        run: python -m pytest -q tests

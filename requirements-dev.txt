@@ -1,0 +1,9 @@
+# Test-only dependencies (no torch or model needed).
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+numpy
+soundfile
+httpx
+pytest

@@ -1,0 +1,10 @@
+# Install the CUDA build of torch first (setup.bat does this); see README.md.
+torch
+kittenml==0.9.4  # the version this UI was built and tested against
+fastapi
+uvicorn
+python-multipart
+numpy
+soundfile
+huggingface_hub
+python-dotenv

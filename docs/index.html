@@ -1,0 +1,142 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KittenTTS 2 Web UI: local text to speech on your own GPU</title>
+<meta name="description" content="A local web UI for the KittenTTS 2 speech model. Runs offline on your own Windows PC and NVIDIA GPU. Listen to real, unedited samples.">
+<meta property="og:title" content="KittenTTS 2 Web UI">
+<meta property="og:description" content="Local text to speech that runs on your own GPU.">
+<meta property="og:image" content="https://usamakhangt4.github.io/kitten-tts-webui/screenshot.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%238b7dff'/%3E%3Cpath d='M4.5 19.5c0-5 0-9 1-14l4 3.5h5l4-3.5c1 5 1 9 1 14z' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#0e1015;--surface:#161922;--surface-2:#1d212c;--surface-3:#262b38;--border:#2a2f3c;--border-strong:#3a4152;--text:#eef0f5;--text-2:#a9b0c0;--text-3:#6f7789;--accent:#8b7dff;--accent-hover:#a094ff;--accent-ink:#0f0b2a;--accent-soft:rgba(139,125,255,.14);--accent-ring:rgba(139,125,255,.45);
+--font:"Inter","Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;--mono:ui-monospace,"Cascadia Code",Consolas,monospace;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--bg:#f5f6fa;--surface:#fff;--surface-2:#f2f4f8;--surface-3:#e8ebf2;--border:#e2e5ed;--border-strong:#cdd2de;--text:#141821;--text-2:#4f5768;--text-3:#6b7282;--accent:#5b4cf0;--accent-hover:#4a3be0;--accent-ink:#fff;--accent-soft:rgba(91,76,240,.10);--accent-ring:rgba(91,76,240,.35);color-scheme:light}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 var(--font);color:var(--text);background:var(--bg)}
+a{color:var(--accent)}a:hover{color:var(--accent-hover)}
+:focus-visible{outline:2px solid var(--accent-ring);outline-offset:2px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--surface);padding:8px 12px;z-index:9}.skip:focus{left:8px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:18px;letter-spacing:-.01em;color:var(--text);text-decoration:none}
+.brand small{font-weight:500;color:var(--text-3);font-size:14px}
+.mark{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#c58bff);color:#fff;flex:none}
+.mark svg{width:18px;height:18px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:600 14px/1 var(--font);text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--border-strong);color:var(--text)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}.btn.primary:hover{background:var(--accent-hover);color:var(--accent-ink)}
+.hero{padding:48px 0 28px}
+.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.1;letter-spacing:-.025em;margin:0 0 16px;max-width:16ch}
+.hero p.lead{font-size:clamp(17px,2vw,19px);color:var(--text-2);max-width:60ch;margin:0 0 24px}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.note{font-size:13px;color:var(--text-3);margin-top:14px}
+figure.shot{margin:32px 0 0;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+figure.shot img{display:block;width:100%;height:auto}
+figure.shot figcaption{font-size:13px;color:var(--text-3);padding:10px 14px;border-top:1px solid var(--border)}
+section{padding:40px 0}
+h2{font-size:24px;letter-spacing:-.015em;margin:0 0 8px}
+.sub{color:var(--text-2);margin:0 0 24px;max-width:65ch}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
+.feat h3{font-size:16px;margin:0 0 6px}.feat p{margin:0;color:var(--text-2);font-size:15px}
+.clip{display:flex;flex-direction:column;gap:12px}
+.clip-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.clip h3{font-size:17px;margin:0}
+.tag{font:600 12px/1 var(--font);color:var(--accent);background:var(--accent-soft);padding:5px 9px;border-radius:999px}
+.clip blockquote{margin:0;color:var(--text);font-size:15px;flex:1}
+.clip audio{width:100%;height:40px}
+.meta{font-size:12px;color:var(--text-3)}
+.honest{border-left:3px solid var(--accent);background:var(--surface);border-radius:0 12px 12px 0;padding:14px 18px;color:var(--text-2);margin-top:20px;max-width:75ch}
+ol.steps{padding-left:22px;margin:0;max-width:75ch}ol.steps li{margin:0 0 18px}
+pre{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;overflow-x:auto;font:14px/1.5 var(--mono);margin:8px 0 0}
+code{overflow-wrap:anywhere;font-family:var(--mono);font-size:.92em;background:var(--surface-2);padding:1px 5px;border-radius:5px}pre code{background:none;padding:0}
+ul.req{margin:0;padding-left:20px;color:var(--text-2);max-width:75ch}ul.req li{margin-bottom:6px}
+footer{border-top:1px solid var(--border);padding:24px 0 40px;color:var(--text-3);font-size:13px}
+@media (max-width:560px){.hero{padding-top:24px}header.top .btn span.long{display:none}section{padding:28px 0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+<header class="top">
+  <a class="brand" href="./" aria-label="KittenTTS 2 Web UI home"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5c0-5 0-9 1-14l4 3.5h5l4-3.5c1 5 1 9 1 14z"/><path d="M9 14h.01M15 14h.01M11 16.5h2"/></svg></span>KittenTTS <small>2 Web UI</small></a>
+  <a class="btn" href="https://github.com/UsamaKhanGT4/kitten-tts-webui"><span class="long">View on</span> GitHub</a>
+</header>
+<main id="main">
+<div class="hero">
+  <h1>Local text to speech that runs on your own GPU.</h1>
+  <p class="lead">A small web interface for the KittenTTS 2 speech model. Type a line, pick one of 47 voices, press Generate. Nothing leaves your computer, and there is no account or API key.</p>
+  <div class="actions">
+    <a class="btn primary" href="#quick-start">Quick start</a>
+    <a class="btn" href="#samples">Listen to samples</a>
+  </div>
+  <p class="note">Unofficial project. Not affiliated with or endorsed by KittenML or Stellon Labs.</p>
+  <figure class="shot">
+    <img src="screenshot.png" width="1600" height="900" alt="The KittenTTS 2 web UI in its ready state: a text box, a voice list, style presets and a Generate button, with a badge showing the model running on an NVIDIA GeForce RTX 3060.">
+    <figcaption>The web UI, ready on an RTX 3060.</figcaption>
+  </figure>
+</div>
+
+<section aria-labelledby="what">
+  <h2 id="what">What it is</h2>
+  <p class="sub">A local server and a single page. It loads the model once, then turns text into speech on your machine.</p>
+  <div class="grid">
+    <div class="card feat"><h3>Offline</h3><p>After the first model download, it runs without an internet connection. Clips are saved as .wav files in a local folder.</p></div>
+    <div class="card feat"><h3>Uses your GPU</h3><p>Runs on an NVIDIA card with CUDA, using about 4.7 GB of video memory. It falls back to the CPU, slowly.</p></div>
+    <div class="card feat"><h3>47 voices</h3><p>English voices with different characters, plus voices for nine other languages. Each clip can be played, downloaded or deleted from the history list.</p></div>
+  </div>
+</section>
+
+<section id="samples" aria-labelledby="samples-h">
+  <h2 id="samples-h">Samples</h2>
+  <p class="sub">Real output from the app on an RTX 3060. Each clip was generated once and is shown as it came out, apart from trimmed silence and MP3 compression.</p>
+  <div class="grid">
+    <article class="card clip"><div class="clip-head"><h3>Bella</h3><span class="tag">Neutral</span></div>
+      <blockquote>&ldquo;Welcome to KittenTTS 2, a local text to speech studio that runs entirely on your own machine.&rdquo;</blockquote>
+      <audio controls preload="none" src="audio/bella.mp3" aria-label="Bella sample"></audio><span class="meta">Stable preset</span></article>
+    <article class="card clip"><div class="clip-head"><h3>Marcus</h3><span class="tag">Smooth radio</span></div>
+      <blockquote>&ldquo;No cloud, no API keys, no data leaving your computer. Everything runs offline on your GPU.&rdquo;</blockquote>
+      <audio controls preload="none" src="audio/marcus.mp3" aria-label="Marcus sample"></audio><span class="meta">Stable preset</span></article>
+    <article class="card clip"><div class="clip-head"><h3>Saoirse</h3><span class="tag">Joyful</span></div>
+      <blockquote>&ldquo;Oh, this is the best news I've heard all year!&rdquo;</blockquote>
+      <audio controls preload="none" src="audio/saoirse.mp3" aria-label="Saoirse sample"></audio><span class="meta">Stable preset, no tags</span></article>
+    <article class="card clip"><div class="clip-head"><h3>Elliot</h3><span class="tag">Grieving</span></div>
+      <blockquote>&ldquo;I keep thinking about the last time we talked.&rdquo;</blockquote>
+      <audio controls preload="none" src="audio/elliot.mp3" aria-label="Elliot sample"></audio><span class="meta">Stable preset, no tags</span></article>
+    <article class="card clip"><div class="clip-head"><h3>Victor</h3><span class="tag">Controlled fury</span></div>
+      <blockquote>&ldquo;You lied to me. You looked me in the eye and lied.&rdquo;</blockquote>
+      <audio controls preload="none" src="audio/victor.mp3" aria-label="Victor sample"></audio><span class="meta">Stable preset, no tags</span></article>
+  </div>
+  <p class="honest">The mood in these samples comes from the voice, not from markup. Each voice is built from a reference recording made in that mood. The model also accepts emotion tags, vocal events and emphasis markers, but they are a beta feature of the model and in our tests they made little or no audible difference, so none are used here.</p>
+</section>
+
+<section id="quick-start" aria-labelledby="qs">
+  <h2 id="qs">Quick start</h2>
+  <p class="sub">Setup has two steps: get the code, then run <code>setup.bat</code> once. After that you only need <code>start.bat</code>.</p>
+  <ol class="steps">
+    <li><strong>Before you begin,</strong> install <a href="https://www.python.org/downloads/">Python 3.12</a> (tick <strong>Add python.exe to PATH</strong>) and, optionally, <a href="https://git-scm.com/download/win">Git</a>. If you have an NVIDIA GPU, make sure the driver is 570 or newer (run <code>nvidia-smi</code> to check).</li>
+    <li><strong>Get the code.</strong> Open a Command Prompt in a folder on a drive with about 12 GB free and run:
+<pre><code>git clone https://github.com/UsamaKhanGT4/kitten-tts-webui
+cd kitten-tts-webui</code></pre>
+      No Git? On the GitHub page click the green <strong>Code</strong> button, then <strong>Download ZIP</strong>, and unzip it.</li>
+    <li><strong>Run setup once.</strong> In that folder, run <code>setup.bat</code> (or double-click it). It takes 5 to 15 minutes and downloads a few GB. If it prints a GPU warning, update your NVIDIA driver and run it again.</li>
+    <li><strong>Every time after that,</strong> run <code>start.bat</code>. Your browser opens <code>http://127.0.0.1:7860/</code>. The first start downloads about 2.1 GB of model files, so give it a few minutes.</li>
+  </ol>
+  <h2 style="font-size:18px;margin-top:28px">Requirements</h2>
+  <ul class="req">
+    <li>Windows 10 or 11. The setup and start scripts are Windows-only.</li>
+    <li>An NVIDIA graphics card with 6 GB of video memory or more is recommended, with driver 570 or newer. Without one it runs on the CPU, slowly.</li>
+    <li>Python 3.12 and about 12 GB of free disk space.</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p>KittenTTS 2 Web UI is an unofficial project. The KittenTTS 2 model is by KittenML and released under the Stellon Labs Community License; see the <a href="https://huggingface.co/KittenML/kitten-tts-2">model card</a>. Source on <a href="https://github.com/UsamaKhanGT4/kitten-tts-webui">GitHub</a>.</p>
+</footer>
+</div>
+</body>
+</html>
