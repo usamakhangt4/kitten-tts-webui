@@ -2,6 +2,8 @@
 
 A simple web page for turning text into speech with the KittenTTS 2 model, running entirely on your own Windows PC.
 
+It comes with 47 built-in voices (38 English voices with different characters and moods, plus 9 language voices), ready-made sample texts, and a history of every clip you make.
+
 ![Screenshot of the web UI](docs/screenshot.png)
 
 Listen to samples: https://usamakhangt4.github.io/kitten-tts-webui/
@@ -56,9 +58,9 @@ You can type text while the model loads. If loading fails, the page shows the re
 ## Using it
 
 - **Voices.** Pick a voice from the Voice list. English voices come first; language voices (Arabic, Chinese, French, German, Hindi, Italian, Portuguese, Russian, Spanish) are listed below them. For the language voices, turn **Normalize** off.
-- **Presets.** **Stable** gives an even delivery, **Expressive** follows tags more strongly, and **Auto** picks Expressive when the text contains tags and Stable otherwise.
-- **Tags.** Use the toolbar under the text box to insert emotion tags such as `[joyful]` or `[sad]`, vocal events such as `<laugh>` or `<sigh>`, and `(((emphasis)))` around a word. These are beta features of the model and don't always take effect.
 - **Samples.** The **Samples** menu fills in example texts with a matching voice and preset.
+- **Presets.** **Stable** gives an even delivery and **Expressive** a looser one. **Auto** picks Expressive when the text contains tags and Stable otherwise.
+- **Tags (experimental).** The toolbar under the text box can insert the model's emotion tags (such as `[joyful]`), vocal events (such as `<laugh>`) and `(((emphasis)))` markers. In our testing they made no audible difference, so don't rely on them. To change the mood of a clip, pick a different voice instead.
 - **Generate.** Press **Generate** (or Ctrl+Enter in the text box). The clip plays in the Latest clip card and can be downloaded as a `.wav`.
 - **History.** Every clip is saved in the `output` folder and listed under History, where you can play, download or delete it.
 - **Advanced.** Change the model weights or decoder (this reloads the model) and sampling settings such as temperature and seed.
