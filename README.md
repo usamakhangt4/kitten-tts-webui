@@ -124,7 +124,7 @@ The server has **no password or login**. By default it only listens on `127.0.0.
 
 This project has three parts with different licenses.
 
-- **This web UI and the scripts in this repository** are released under the MIT License, Copyright (c) 2026 Usama Khan. See [LICENSE](LICENSE).
+- **This web UI and the scripts in this repository** are released under the MIT License, Copyright (c) 2026 Muhammad Usama Bin Akhtar Khan. See [LICENSE](LICENSE).
 - **The `kittenml` Python package** (KittenML/KittenTTS), which setup installs as a dependency, is licensed under Apache License 2.0.
 - **The KittenTTS 2 model weights** (`KittenML/kitten-tts-2` on Hugging Face) are licensed under the Stellon Labs Community License. They are **not** open source and are **not** included in this repository. They are downloaded from Hugging Face when you first run the app, and by doing so you must accept that license. Review it before any commercial use. In short, it allows non-commercial use and limited commercial use, requires attribution, and requires registration with Stellon Labs for commercial use. Read the full license on the model page before using the output: https://huggingface.co/KittenML/kitten-tts-2
 
