@@ -34,3 +34,4 @@ design/
 *.ckpt
 *.npz
 .pytest_cache/
+.idea/
