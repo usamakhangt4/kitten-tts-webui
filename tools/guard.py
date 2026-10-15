@@ -31,7 +31,9 @@ def main() -> int:
         for name in filenames:
             p = Path(dirpath) / name
             rel = p.relative_to(ROOT).as_posix()
-            if p.suffix.lower() in BLOCKED_EXT:
+            if p.suffix.lower() == ".mp3" and rel.startswith("docs/"):
+                pass  # demo samples for the GitHub Pages site, same rule as .gitignore
+            elif p.suffix.lower() in BLOCKED_EXT:
                 problems.append(f"{rel}: weight/audio file must not be committed")
                 continue
             if p.resolve() == SELF:
